@@ -45,6 +45,28 @@ app.post('/products', checkScope('force_edit'), addProduct);
 app.put('/products/:name', checkScope('force_edit'), updateProduct);
 app.delete('/products/:name', checkScope('force_admin'), deleteProduct);
 
+
+// Add endpoint to provide JWT, restricted to 'force_admin' scope
+app.get('/jwt', 
+    passport.authenticate('JWT', { session: false }), 
+    checkScope('force_admin'), // Restrict access to 'force_admin' scope
+    (req, res) => {
+        try {
+            const authorizationHeader = req.headers['authorization'];
+
+            if (!authorizationHeader) {
+                return res.status(401).send({ error: 'Authorization header not found.' });
+            }
+
+            const jwt = authorizationHeader.split(' ')[1]; // Extract the token
+            res.status(200).send({ jwt });
+        } catch (error) {
+            console.error('Error retrieving JWT:', error);
+            res.status(500).send({ error: 'Internal Server Error while retrieving JWT.' });
+        }
+    }
+);
+
 // Middleware: Check scope
 function checkScope(requiredScope) {
     return (req, res, next) => {

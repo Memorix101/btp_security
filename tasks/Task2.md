@@ -1,172 +1,102 @@
-# Task 2: Update XSUAA Configuration for Role Management
+# Task 2: Inspecting the JWT Token for the Jedi Archives
 
-In this task, you will learn how to update the XSUAA configuration by replacing the Star Wars-themed user roles with standard roles like Admin, Editor, Reader, and Guest. This transition involves modifying the `xs-security.json` file, adjusting your application code in `index.js`, and republishing the updated configuration to Cloud Foundry.
+## Introduction to the JWT Token  
+JSON Web Token (JWT) is a compact, URL-safe means of representing claims to be transferred between two parties. It is commonly used in OAuth2 and OpenID Connect (OIDC) flows, such as in the SAP BTP Cloud Foundry environment. JWTs are signed and optionally encrypted tokens that include claims like user information, scopes, and the token issuer.
 
-## Step-by-Step Guide
+In our BTP application, the SAP XSUAA service issues JWTs when users authenticate. These tokens are securely passed between services to validate permissions and manage access control.
 
-### Step 1: Modify `xs-security.json`
+---
 
-**Objective**: Transition to new standard user roles.
+## Goal of Task 2
 
-#### Instructions:
+You will use the `/jwt` endpoint implemented in the backend to retrieve your JWT, and then you will inspect the token's contents using [jwt.io](https://jwt.io). By analyzing the JWT, you will identify key information, such as the token issuer, scopes, and user identity.
 
-1. **Locate the File**: 
-    - Navigate to `btp_security/security/xs-security.json` in your project directory via the BTP development environment.
-    ![xssecurity](../images/xs-json.png)
+Additionally, you will **draw the JWT token flow** based on the decoded content to understand how authentication and authorization work.
 
-2. **Update Scopes**:
-    - Replace the existing Star Wars-themed scopes with the following:
+---
 
-    ```json
-    "scopes": [
-      {
-        "name": "$XSAPPNAME.admin",
-        "description": "Gives full admin rights."
-      },
-      {
-        "name": "$XSAPPNAME.edit",
-        "description": "Allows content editing."
-      },
-      {
-        "name": "$XSAPPNAME.read",
-        "description": "Permits viewing content."
-      },
-      {
-        "name": "$XSAPPNAME.guest",
-        "description": "Allows access to guest content."
-      }
-    ]
-    ```
+## Steps
 
-3. **Edit Role Templates**:
-    - Change the existing Star Wars role templates to new roles. For example, transform:
-    
-    ```json
-    "role-templates": [
-      {
-        "name": "jedi_knight",
-        "description": "Access to Jedi knowledge.",
-        "scope-references": [
-          "$XSAPPNAME.force_read"
-        ]
-      },...
-    ]
-    ```
-    - To:
+1. **Retrieve the JWT**  
+   Visit the following endpoint for your BTP application backend to fetch the JWT:  
+   ```
+   https://frontendgroupxx.cfapps.us10-001.hana.ondemand.com/jwt
+   ```
+   Replace `groupxx` with your unique group number.
 
-    ```json
-    "role-templates": [
-      {
-        "name": "reader",
-        "description": "Readers can read hardware from the Database",
-        "scope-references": [
-          "$XSAPPNAME.read"
-        ]
-      },...
-    ]
-    ```
-    -Your task is to do it also for the other elements in the role-templates array
+   - Ensure you are logged in and have sufficient permissions (`force_admin` role) to access the endpoint.
+   - Copy the JWT token provided in the response.
 
-4. **Edit Role Collections**:
-    - Update role collections accordingly. For instance, change:
+2. **Inspect the JWT on jwt.io**  
+   Go to [jwt.io](https://jwt.io) and paste the JWT token into the **"Encoded"** section.
 
-    ```json
-    "role-collections": [
-      {
-        "name": "JediOrder",
-        "description": "Members of the Jedi Order with reading privileges.",
-        "role-template-references": [
-          "$XSAPPNAME.jedi_knight"
-        ]
-      },...
-    ]
-    ```
-    - To:
+   - jwt.io will automatically decode the token and display the **Header**, **Payload**, and **Signature**.
 
-    ```json
-    "role-collections": [
-      {
-        "name": "Reader",
-        "description": "Members of the Reader Collections will have reading privileges.",
-        "role-template-references": [
-          "$XSAPPNAME.reader"
-        ]
-      },...
-    ]
-    ```
-    -Your task is to do it also for the other elements in the role-collections array
-    
-### Step 2: Deploy Updated XSUAA Configuration
-
-Deploy the updated `xs-security.json` configuration to your existing XSUAA service:
-
-1. **Open Terminal**: 
-   - Ensure you are in the `btp_security` directory.
+3. **Analyze the Decoded JWT**  
+   Examine the **Payload** (the middle section) for the following fields:
    
-2. **Update Service**:
-   - Run the command: 
-     ```bash
-     cf update-service xsuaa-service-tutorial -c ./security/xs-security.json
-     ```
-   - Wait for a confirmation message indicating success or address any errors.
+   | Claim              | Description                                               |
+   |---------------------|-----------------------------------------------------------|
+   | `iss`              | The **Issuer** of the token. Identifies the XSUAA service.|
+   | `sub`              | The **Subject** of the token. Usually your user ID.       |
+   | `scope`            | Lists the scopes (permissions) granted to the user.       |
+   | `exp`              | The **Expiration Time** of the token (in Unix time).      |
+   | `client_id`        | The client application ID used to obtain the JWT.         |
+   | `user_name`        | The username or email of the authenticated user.          |
 
-### Step 3: Adjust Code in `index.js`
+4. **Document Your Observations**  
+   Answer the following questions based on your JWT inspection:
+   - What is the `iss` (Issuer) of your JWT?  
+   - What `scope` values are listed in the token? Are these aligned with the roles assigned to you?  
+   - When does the token expire (convert the `exp` value to a readable date and time)?  
+   - What is your `user_name` or `sub` value in the token?  
 
-**Objective**: Reflect new scopes in your application code.
+5. **Reflect on Your Permissions**  
+   - Are the permissions (scopes) in your JWT sufficient to perform actions like adding or deleting hardware items?  
+   - If not, revisit the [BTP Cockpit](https://cockpit.hanatrial.ondemand.com/) and assign yourself the appropriate **Role Collections** (`JediOrder`, `SithEmpire`, etc.).
 
-#### Instructions:
+6. **Draw the JWT Token Flow**  
+   Based on the decoded JWT content and your understanding, create a flow diagram to represent the following:
+   - **Token Issuance**: Identify the issuer (`iss`) of the JWT.
+   - **Token Recipient**: Who the token is intended for (`aud` - Audience).
+   - **User Information**: Highlight the subject (`sub` or `user_name`) of the token.
+   - **Scopes**: Include the granted permissions (`scope` values).
+   - **Expiration**: Indicate when the token expires (`exp`).
+   - **Process Flow**: Show the flow of the token from the identity provider (XSUAA) to the backend application.
 
-1. **Verify Successful Update**: 
-   - Ensure the XSUAA instance was updated correctly in Step 1.
+---
 
-2. **Update Middleware**:
-   - Open `index.js` located in `btp_security/backend/`.
-   ![indexjs](../images/indexjs.png)
-   
-3. **Modify Scope Checks**:
-   - Replace the Star Wars-themed scopes with new ones in your code: 
-   - Open the `index.js` file and locate the following part:
-```javascript
-// API Endpoints with scope checks
+## Example of a Decoded JWT
 
-app.get('/products', checkScope('force_read'), getProducts);
-app.get('/products/:name', checkScope('force_read'), getProductsByName);
-app.post('/products', checkScope('force_edit'), addProduct);
-app.put('/products/:name', checkScope('force_edit'), updateProduct);
-app.delete('/products/:name', checkScope('force_admin'), deleteProduct);
-```
-This code makes sure that the `/products` endpoint of the BTP application can only be accessed, if the corresponding scopes in the `checkScope()` function have been assigned to a user. Remember that you initially assigned yourself the `JediOrder` role collection that inherited the `jedi_knight` role template which then provided you the scope `$XSAPPNAME.force_read`. Since we updated `$XSAPPNAME.force_read` to `$XSAPPNAME.read`, we also need to reflect this in the code middleware. For this, update the existing code to:
+After decoding a JWT, you might see the following **Payload**:
 
-```javascript
-// API Endpoints with scope checks
-
-app.get('/products', checkScope('read'), getProducts);
-app.get('/products/:name', checkScope('read'), getProductsByName);
-app.post('/products', checkScope('edit'), addProduct);
-app.put('/products/:name', checkScope('edit'), updateProduct);
-app.delete('/products/:name', checkScope('admin'), deleteProduct);
+```json
+{
+  "iss": "https://<subdomain>.authentication.sap.hana.ondemand.com",
+  "sub": "user123@galacticalliance.com",
+  "aud": "product-list",
+  "scope": [
+    "product-list.force_read",
+    "product-list.force_edit"
+  ],
+  "exp": 1714323456,
+  "iat": 1714319856,
+  "client_id": "sb-product-list-client",
+  "user_name": "user123@galacticalliance.com"
+}
 ```
 
-### Step 4: Republish the Application
+---
 
-**Objective**: Deploy the updated backend.
+## Task Summary
 
-1. **Save Changes**:
-   - Ensure all changes in `index.js` are saved.
+1. Visit `/jwt` to retrieve your JWT token.
+2. Use [jwt.io](https://jwt.io) to decode and inspect the token.
+3. Analyze the token fields and answer the provided questions.
+4. Draw a flow diagram of the JWT token flow based on its decoded content.
+5. Ensure your scopes (permissions) are aligned with your assigned roles.
 
-2. **Deploy Application**:
-   - Execute in the terminal within `btp_security`: 
-     ```bash
-     cf push product-list
-     ```
+Once you have successfully inspected the JWT and visualized the token flow, continue with [Task 3](./Task3.md).
 
-### Step 5: Assign New Roles
+---
 
-1. **Assign Roles**:
-   - Assign yourself the updated role collections like Admin, Editor, Reader, and Guest using the SAP BTP Cockpit, analogous to [Step 6](../Readme.md#step-6-assign-necessary-roles) from the initial deployment.
-
-2. **Test Changes**: 
-   - Access the frontend via `https://frontendGroupxx.cfapps.us10-001.hana.ondemand.com` and attempt to add or delete a hardware item, verifying the roles are correctly applied.
-
-
-If you have updated the `xs-security.json` based on the new scopes and you are able to add and delete items from the hardware store, you can continue with [Task 3](./Task3.md)
