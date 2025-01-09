@@ -18,7 +18,7 @@ Before you begin, ensure you have the following:
 
 ## Deploying the Hardware Shop on SAP BTP
 
-We'll use the [SAP Business Application Studio](https://www.sap.com/products/technology-platform/business-application-studio.html) for deployment. You can also deploy from your computer, but using SAP Business Application Studio is recommended as it simplifies the process.
+We'll use the [SAP Business Application Studio](https://www.sap.com/products/technology-platform/business-application-studio.html)  for deployment. You can also deploy from your computer, but using SAP Business Application Studio is recommended as it simplifies the process.
 
 ### Step 1: Set Up SAP BTP Trial Account
 
@@ -26,10 +26,51 @@ We'll use the [SAP Business Application Studio](https://www.sap.com/products/tec
 
 ### Step 2: Set Up SAP Business Application Studio
 
-1. Follow [this tutorial (only Step 4 needed)](https://developers.sap.com/tutorials/set-up-bas.html#:~:text=STEP%204-,Launch%20SAP%20Business%20Application%20Studio,-Navigate%20to%20your) to subscribe to the SAP Business Application Studio in your trial account.
-2. When creating the development workspace in the 4th step of the tutorial, name the workspace `Hardware_Store`.
+1. When creating the development workspace in the 4th step of the following tutorial, name the workspace `Hardware_Store`. 
+2. Follow [this tutorial (only Step 4 needed)](https://developers.sap.com/tutorials/set-up-bas.html#:~:text=STEP%204-,Launch%20SAP%20Business%20Application%20Studio,-Navigate%20to%20your) to subscribe to the SAP Business Application Studio in your trial account. Remember to name the workspace `Hardware_Store`.
 
 ### Step 3: Clone the Project and Install Dependencies
+
+#### Pre-Requirement, if you clone a repo from github.tools.sap
+
+Before you can clone a github.tools.sap GitHub repository into your SAP Business Technology Platform (BTP) environment, you need to create a **Personal Access Token (PAT)** on GitHub. This token will be used for authentication instead of your password. To get this token:
+
+
+1. Go to **github.tools.sap GitHub** and log into your account: 
+[https://github.tools.sap/](https://github.tools.sap/)
+2. In the top-right corner, click on your **profile picture** and select **Settings**.
+
+![OpenProfile](/images/01_Settings.png)
+
+3. In the left sidebar, select **Developer settings**.
+
+![DeveloperSetting](/images/02_devSetting.png)
+
+4. Click on **Personal access tokens > Tokens (classic)**. 
+
+![PersonalAccessToken](/images/03_ClassicToken.png)
+
+5. Click on **Generate new token (classic)**. 
+
+![GenerateToken](/images/04_createToken.png)
+
+6. Provide a descriptive **name** for the token, e.g., `BTP Git Clone Token`.
+
+7. Under **Expiration**, select a validity period for the token (e.g., 30 days or custom).
+
+8. In the **Select scopes** section, choose:
+   - `repo` – Full control of private repositories. 
+
+![CreateNewToken](/images/05_Repo.png)
+
+9. Scroll down and click **Generate token**.
+
+10. **Copy** the generated token and **store it securely**. You won't be able to view it again. 
+
+![CopyToken](/images/06_Token.png)
+
+#### Continue here if you are on a public GitHub Repo or already have a token for github.tools.sap
+
 
 1. Open the development workspace `Hardware_Store` you created in the previous step.
 2. Open a new terminal by clicking on the three lines at the top left of the development environment, then selecting **Terminal > New Terminal**. 
@@ -177,13 +218,17 @@ Now that you have the right access rights to the Hardware Store BTP Application,
    - Replace `xx` with a unique two-digit value. (e.g., 42)
 ![Random Value Routes](images/RandomValueRoute.png)
 4. Save the changes.
-5. In the terminal, run:
+5. Open the `security/xs-security.json` file
+6. Modify the URL in line 84 such that it reflects your choosen group number (e.g.,42 and not `xx`)
+![UpdateXSUAA](images/001_BTP.png)
+7. Save the changes.
+8. In the terminal, run:
    ```bash
    cf push
    ```
    The application will now be deployed to the specified endpoints.
 
-6. Verify the deployment by running:
+9. Verify the deployment by running:
    ```bash
    cf apps
    ```
@@ -209,6 +254,10 @@ If you go to the URL, you can see the products, but you cannot add or delete the
  4. [Task 4](/tasks/Task4.md)
  5. [Task 5](/tasks/Task5.md)
  
+
+## Further References for the Tasks
+1. What are [Roles](https://sapit-cloud.int.sap/knowledgebase/technology-and-architecture/technology-patterns/auth)?
+2. Cloud native [Reference Architecture](https://sapit-cloud.int.sap/knowledgebase/technology-and-architecture/index.html)
 
 ## Navigation
 
