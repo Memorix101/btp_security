@@ -31,13 +31,13 @@ We'll use the [SAP Business Application Studio](https://www.sap.com/products/tec
 
 ### Step 3: Clone the Project and Install Dependencies
 
-#### Pre-Requirement, if you clone a repo from github.tools.sap
+#### Pre-Requirement, if you clone a repo from github.com
 
-Before you can clone a github.tools.sap GitHub repository into your SAP Business Technology Platform (BTP) environment, you need to create a **Personal Access Token (PAT)** on GitHub. This token will be used for authentication instead of your password. To get this token:
+Before you can clone a github.com GitHub repository into your SAP Business Technology Platform (BTP) environment, you need to create a **Personal Access Token (PAT)** on GitHub. This token will be used for authentication instead of your password. To get this token:
 
 
-1. Go to **github.tools.sap GitHub** and log into your account: 
-[https://github.tools.sap/](https://github.tools.sap/)
+1. Go to **github.com GitHub** and log into your account: 
+[https://github.com/](https://github.com/)
 2. In the top-right corner, click on your **profile picture** and select **Settings**.
 
 ![OpenProfile](/images/01_Settings.png)
@@ -69,7 +69,7 @@ Before you can clone a github.tools.sap GitHub repository into your SAP Business
 
 ![CopyToken](/images/06_Token.png)
 
-#### Continue here if you are on a public GitHub Repo or already have a token for github.tools.sap
+#### Continue here if you are on a public GitHub Repo or already have a token for github.com
 
 
 1. Open the development workspace `Hardware_Store` you created in the previous step.
@@ -79,7 +79,7 @@ Before you can clone a github.tools.sap GitHub repository into your SAP Business
  
 3. In the terminal, enter:
    ```bash
-   git clone https://github.tools.sap/I552413/btp_security.git
+   git clone https://github.com/WebThor/btp_security.git
    ```
 4. Open the newly created directory in the development environment by clicking on the three lines at the top left, selecting **File > Open Folder...**, choosing the `btp_security` folder, and clicking OK. Trust the directory if prompted and open the terminal again, if it is now closed. ![FolderOpen](images/OpenFolder.png)
 5. You should now see the folder structure on the left side of your development environment. ![CurrentLayout](images/currentLayout.png)
@@ -223,6 +223,12 @@ Now that you have the right access rights to the Hardware Store BTP Application,
 ![UpdateXSUAA](images/001_BTP.png)
 7. Save the changes.
 8. In the terminal, run:
+   
+   ```bash
+   cf update-service xsuaa-service-tutorial -c ./security/xs-security.json
+   ```
+   followed by
+
    ```bash
    cf push
    ```

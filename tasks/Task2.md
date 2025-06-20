@@ -9,7 +9,7 @@ In our BTP application, the SAP XSUAA service issues JWTs when users authenticat
 
 ## Goal of Task 2
 
-You will use the `/jwt` endpoint implemented in the backend to retrieve your JWT, and then you will inspect the token's contents using [jwt.io](https://jwt.io). By analyzing the JWT, you will identify key information, such as the token issuer, scopes, and user identity.
+You will use the `/jwt` endpoint implemented in the backend to retrieve your JWT, and then you will inspect the token's contents using [JWT Decoder](https://jwt.io/). By analyzing the JWT, you will identify key information, such as the token issuer, scopes, and user identity.
 
 Additionally, you will **draw the JWT token flow** based on the decoded content to understand how authentication and authorization work.
 
@@ -28,7 +28,7 @@ Additionally, you will **draw the JWT token flow** based on the decoded content 
    - Copy the JWT token provided in the response.
 
 2. **Inspect the JWT on jwt.io**  
-   Go to [jwt.io](https://jwt.io) and paste the JWT token into the **"Encoded"** section.
+   Go to [SAP JWT Decoder](https://jwt.io/) and paste the JWT token into the **"Encoded"** section.
 
    - jwt.io will automatically decode the token and display the **Header**, **Payload**, and **Signature**.
 
@@ -91,7 +91,7 @@ After decoding a JWT, you might see the following **Payload**:
 ## Task Summary
 
 1. Visit `/jwt` to retrieve your JWT token.
-2. Use [jwt.io](https://jwt.io) to decode and inspect the token.
+2. Use [SAP JWT Decoder](https://jwt.io/) to decode and inspect the token.
 3. Analyze the token fields and answer the provided questions.
 4. Draw a flow diagram of the JWT token flow based on its decoded content.
 5. Ensure your scopes (permissions) are aligned with your assigned roles.
